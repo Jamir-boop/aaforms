@@ -74,6 +74,24 @@
         button[type="submit"]:hover {
             background: #005288;
         }
+        /* Reset button style */
+        #reset-btn {
+            background: #e7f3fa;
+            color: #005288;
+            border: 1px solid #b6d2e6;
+            border-radius: 3px;
+            padding: 7px 30px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 16px;
+            margin-top: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+        #reset-btn:hover {
+            background: #0070b8;
+            color: #fff;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -104,6 +122,7 @@
             form {gap: 10px;}
             .form-group {min-width: 100px;}
             th, td {padding: 5px;}
+            #reset-btn {width: 100%;}
         }
     </style>
 </head>
@@ -156,6 +175,7 @@
             <button type="submit" id="submit-btn">Add Person</button>
         </div>
     </form>
+    <button id="reset-btn">Reset People List</button>
     <h2 style="color:#005288;font-weight:600;margin:12px 0 4px 0;font-size:1.18em;">People List</h2>
     <div id="people-list"></div>
     <span class="no-people" id="no-people-msg" style="display:none;">No people yet. Add someone above.</span>
@@ -268,6 +288,12 @@
         savePeople(people);
         renderPeople();
         document.getElementById('person-form').reset();
+    };
+
+    // Reset button logic
+    document.getElementById('reset-btn').onclick = function() {
+        localStorage.removeItem(LS_KEY);
+        renderPeople();
     };
 
     renderPeople();
