@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>People List</title>
+    <style>
+        body {
+            background: #f3f3f3;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 24px 32px 32px 32px;
+        }
+        h1 {
+            font-size: 1.7em;
+            color: #005288;
+            font-weight: 500;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 28px;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 210px;
+            flex: 1 1 210px;
+        }
+        label {
+            margin-bottom: 3px;
+            font-size: 1em;
+            color: #005288;
+            font-weight: 600;
+        }
+        input[type="text"], select {
+            padding: 6px 10px;
+            border: 1px solid #bdbdbd;
+            border-radius: 3px;
+            background: #fafbfc;
+            font-size: 1em;
+            margin-bottom: 3px;
+        }
+        .radio-group, .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-actions {
+            flex-basis: 100%;
+            margin-top: 10px;
+        }
+        button[type="submit"] {
+            background: #0070b8;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            padding: 7px 30px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        button[type="submit"]:hover {
+            background: #005288;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 10px 8px;
+            font-size: 1em;
+            text-align: left;
+        }
+        th {
+            background: #e7f3fa;
+            color: #1a2328;
+            font-weight: 600;
+        }
+        tr:nth-child(even) td {
+            background: #f7fafb;
+        }
+        .no-people {
+            color: #7d8590;
+            font-size: 1em;
+            margin-top: 5px;
+        }
+        @media (max-width: 650px) {
+            .container {padding: 6px;}
+            form {gap: 10px;}
+            .form-group {min-width: 100px;}
+            th, td {padding: 5px;}
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>People List (SAP Style)</h1>
+    <form id="person-form" autocomplete="off">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" type="text" maxlength="40" required>
+        </div>
+        <div class="form-group">
+            <label for="country">Country</label>
+            <input id="country" type="text" maxlength="32" required>
+        </div>
+        <div class="form-group">
+            <label for="feature">Favorite Automation Feature</label>
+            <input id="feature" type="text" maxlength="64" required>
+        </div>
+        <div class="form-group">
+            <label>Gender</label>
+            <div class="radio-group">
+                <input type="radio" id="male" name="gender" value="Male" required>
+                <label for="male">Male</label>
+                <input type="radio" id="female" name="gender" value="Female">
+                <label for="female">Female</label>
+                <input type="radio" id="other" name="gender" value="Other">
+                <label for="other">Other</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Is Awesome?</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="awesome" name="awesome">
+                <label for="awesome" style="margin-bottom:0;">Yes</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="bot-type">Favorite Bot Type</label>
+            <select id="bot-type" required>
+                <option value="">Select...</option>
+                <option>Task Bot</option>
+                <option>Automation Co-Pilot</option>
+                <option>AI Guardrails</option>
+                <option>Enterprise Knowledge</option>
+                <option>Document Automation</option>
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="submit-btn">Add Person</button>
+        </div>
+    </form>
+    <h2 style="color:#005288;font-weight:600;margin:12px 0 4px 0;font-size:1.18em;">People List</h2>
+    <div id="people-list"></div>
+    <span class="no-people" id="no-people-msg" style="display:none;">No people yet. Add someone above.</span>
+</div>
+<script>
+    const defaultPeople = [
+        {
+            name: "Alex",
+            country: "USA",
+            feature: "Automated login for legacy apps",
+            gender: "Male",
+            awesome: true,
+            botType: "Task Bot"
+        },
+        {
+            name: "Priya",
+            country: "India",
+            feature: "Document Data Extraction",
+            gender: "Female",
+            awesome: false,
+            botType: "Automation Co-Pilot"
+        },
+        {
+            name: "Lee",
+            country: "South Korea",
+            feature: "End-to-end workflow orchestration",
+            gender: "Other",
+            awesome: true,
+            botType: "Enterprise Knowledge"
+        }
+    ];
+    const LS_KEY = 'aa_people_list';
+
+    function loadPeople() {
+        let people = JSON.parse(localStorage.getItem(LS_KEY));
+        if (!people || !Array.isArray(people)) {
+            people = defaultPeople;
+            localStorage.setItem(LS_KEY, JSON.stringify(people));
+        }
+        return people;
+    }
+
+    function savePeople(people) {
+        localStorage.setItem(LS_KEY, JSON.stringify(people));
+    }
+
+    function renderPeople() {
+        const people = loadPeople();
+        const listDiv = document.getElementById('people-list');
+        const noMsg = document.getElementById('no-people-msg');
+        if (people.length === 0) {
+            listDiv.innerHTML = "";
+            noMsg.style.display = '';
+        } else {
+            noMsg.style.display = 'none';
+            let html = `<table aria-label="People Table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Country</th>
+                    <th>Favorite Automation Feature</th>
+                    <th>Gender</th>
+                    <th>Awesome</th>
+                    <th>Bot Type</th>
+                </tr>
+                </thead>
+                <tbody>`;
+            for (let person of people) {
+                html += `<tr>
+                    <td>${person.name}</td>
+                    <td>${person.country}</td>
+                    <td>${person.feature}</td>
+                    <td>${person.gender}</td>
+                    <td>${person.awesome ? "Yes" : "No"}</td>
+                    <td>${person.botType}</td>
+                </tr>`;
+            }
+            html += "</tbody></table>";
+            listDiv.innerHTML = html;
+        }
+    }
+
+    document.getElementById('person-form').onsubmit = function(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const country = document.getElementById('country').value.trim();
+        const feature = document.getElementById('feature').value.trim();
+        const genderNodes = document.getElementsByName('gender');
+        let gender = "";
+        for (let node of genderNodes) {
+            if (node.checked) {
+                gender = node.value;
+                break;
+            }
+        }
+        const awesome = document.getElementById('awesome').checked;
+        const botType = document.getElementById('bot-type').value;
+        if (!name || !country || !feature || !gender || !botType) {
+            return;
+        }
+        let people = loadPeople();
+        people.push({
+            name: name,
+            country: country,
+            feature: feature,
+            gender: gender,
+            awesome: awesome,
+            botType: botType
+        });
+        savePeople(people);
+        renderPeople();
+        document.getElementById('person-form').reset();
+    };
+
+    renderPeople();
+</script>
+</body>
+</html>
