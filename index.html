@@ -75,8 +75,7 @@
         }
         .sap-link {
             display: block;
-            width: 420px;
-            margin: 10px 0;
+            margin: 0;
             padding: 13px 0;
             text-align: center;
             background: #e7f3fa;
@@ -92,9 +91,44 @@
             background: #0070b8;
             color: #fff;
         }
+        .sap-link.visited {
+            background: #f0f0f0;
+            color: #666;
+            border-color: #d1d5db;
+        }
+        .sap-link.visited:hover {
+            background: #0070b8;
+            color: #fff;
+        }
+        .links-head {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+        .reset-btn {
+            background: #e7f3fa;
+            color: #005288;
+            border: 1px solid #b6d2e6;
+            border-radius: 4px;
+            padding: 8px 18px;
+            font-size: 0.92em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .reset-btn:hover {
+            background: #0070b8;
+            color: #fff;
+        }
+        .links-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
         @media (max-width: 650px) {
             .container {padding: 12px;}
-            .sap-link {width: 100%;}
             .readme {padding: 14px;}
         }
     </style>
@@ -133,19 +167,42 @@
         </p>
     </div>
 
-    <a class="sap-link" href="form.html">Forms (easy case)</a>
-    <a class="sap-link" href="case-ab.html">srcdoc + sandbox</a>
-    <a class="sap-link" href="case-c.html">runtime-built DOM</a>
-    <a class="sap-link" href="case-d.html">randomized IDs</a>
-    <a class="sap-link" href="vision-fallback.html">vision fallback</a>
-    <a class="sap-link" href="case-e.html">shadow DOM</a>
-    <a class="sap-link" href="case-f.html">contenteditable divs</a>
-    <a class="sap-link" href="case-g.html">no IDs, addEventListener only</a>
-    <a class="sap-link" href="case-h.html">div submit button</a>
-    <a class="sap-link" href="case-i.html">nested iframe</a>
-    <a class="sap-link" href="case-all.html">all techniques stacked</a>
-    <a class="sap-link" href="scrapping.html">Scrapping</a>
-    <a class="sap-link" href="#">WIP</a>
+    <div class="links-head">
+        <button class="reset-btn" id="reset-btn">Reset visited</button>
+    </div>
+    <div class="links-grid">
+        <a class="sap-link" href="form.html">Forms (easy case)</a>
+        <a class="sap-link" href="case-ab.html">srcdoc + sandbox</a>
+        <a class="sap-link" href="case-c.html">runtime-built DOM</a>
+        <a class="sap-link" href="case-d.html">randomized IDs</a>
+        <a class="sap-link" href="vision-fallback.html">vision fallback</a>
+        <a class="sap-link" href="case-e.html">shadow DOM</a>
+        <a class="sap-link" href="case-f.html">contenteditable divs</a>
+        <a class="sap-link" href="case-g.html">no IDs, addEventListener only</a>
+        <a class="sap-link" href="case-h.html">div submit button</a>
+        <a class="sap-link" href="case-i.html">nested iframe</a>
+        <a class="sap-link" href="case-all.html">all techniques stacked</a>
+        <a class="sap-link" href="scrapping.html">Scrapping</a>
+        <a class="sap-link" href="#">WIP</a>
+    </div>
 </div>
+<script>
+    var VISITED_KEY = 'aa_visited';
+    var visited = new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || '[]'));
+    var links = document.querySelectorAll('.sap-link');
+    links.forEach(function(a){
+        if (visited.has(a.getAttribute('href'))) a.classList.add('visited');
+        a.addEventListener('click', function(){
+            visited.add(a.getAttribute('href'));
+            localStorage.setItem(VISITED_KEY, JSON.stringify(Array.from(visited)));
+            a.classList.add('visited');
+        });
+    });
+    document.getElementById('reset-btn').addEventListener('click', function(){
+        visited.clear();
+        localStorage.removeItem(VISITED_KEY);
+        links.forEach(function(a){ a.classList.remove('visited'); });
+    });
+</script>
 </body>
 </html>
