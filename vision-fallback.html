@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Vision fallback test</title>
+<style>
+    body { font: 16px Arial, sans-serif; background: #f3f3f3; }
+    main { max-width: 640px; margin: 80px auto; padding: 32px; background: white; text-align: center; }
+    #decoys { position: fixed; left: -10000px; top: 0; width: 300px; }
+    .vision-target { padding: 14px 28px; background: #0070b8; color: white; border: 0; border-radius: 4px; }
+    output { display: block; margin-top: 24px; font-weight: bold; }
+</style>
+<body>
+<div id="decoys" aria-hidden="true"></div>
+<main>
+    <h1>Vision fallback test</h1>
+    <p>The target is visible in the screenshot but appears after the labeled-DOM size limit.</p>
+    <button class="vision-target" id="vision-target">Approve vision fallback</button>
+    <output id="result">Waiting</output>
+</main>
+<script>
+    const decoys = document.getElementById('decoys');
+    for (let index = 0; index < 1800; index += 1) {
+        const button = document.createElement('button');
+        button.textContent = `Unrelated automation control ${index}`;
+        decoys.appendChild(button);
+    }
+    const target = document.getElementById('vision-target');
+    target.id = `vision-${crypto.randomUUID()}`;
+    target.onclick = () => document.getElementById('result').textContent = 'Vision click succeeded';
+</script>
+</body>
+</html>

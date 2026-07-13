@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Case ALL — every technique stacked</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Case ALL — every technique stacked</h1>
+    <p class="desc">
+        Nested srcdoc iframe (A+B+I) &rarr; shadow DOM (E) &rarr; runtime-built (C)
+        &rarr; randomized IDs (D) &rarr; contenteditable divs (F) &rarr; div submit button (H)
+        &rarr; addEventListener only (G). The worst-case target.
+    </p>
+    <p class="note">Outer frame (srcdoc + sandbox). Inner frame below runs every technique:</p>
+    <div class="frame-wrap">
+        <iframe id="outer" style="height: 560px;" title="ALL combined outer"></iframe>
+    </div>
+    <a class="back" href="index.html">&larr; Back to Main Menu</a>
+</div>
+<script type="text/html" id="inner-doc">
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"></head>
+<body>
+<div id="host"></div>
+<div id="list"></div>
+<script>
+var rows=[];
+var host=document.getElementById('host');
+var root=host.attachShadow({mode:'open'});
+root.innerHTML='<style>'+
+  'form{display:flex;flex-wrap:wrap;gap:14px 24px;margin-bottom:14px;}'+
+  '.fg{display:flex;flex-direction:column;min-width:200px;flex:1 1 200px;}'+
+  'label{font-size:.95em;color:#005288;font-weight:600;margin-bottom:3px;}'+
+  '[contenteditable]{padding:6px 10px;border:1px solid #bdbdbd;border-radius:3px;background:#fafbfc;font-size:1em;font-family:inherit;color:#1a2328;min-height:20px;white-space:pre-wrap;}'+
+  '[contenteditable]:focus{outline:1px solid #0070b8;}'+
+  '.rg,.cg{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}'+
+  '.act{flex-basis:100%;margin-top:6px;}'+
+  '.divbtn{background:#0070b8;color:#fff;border:none;border-radius:3px;padding:7px 26px;font-size:1em;cursor:pointer;font-weight:500;display:inline-block;}'+
+  '.divbtn:hover{background:#005288;}'+
+  '.divbtn:focus{outline:2px solid #0070b8;outline-offset:2px;}'+
+'</style>'+
+'<form autocomplete="off">'+
+  '<div class="fg"><label data-for="name">Name</label><div contenteditable="true" data-field="name"></div></div>'+
+  '<div class="fg"><label data-for="country">Country</label><div contenteditable="true" data-field="country"></div></div>'+
+  '<div class="fg"><label data-for="feature">Favorite Automation Feature</label><div contenteditable="true" data-field="feature"></div></div>'+
+  '<div class="fg"><label>Gender</label><div class="rg">'+
+    '<input type="radio" data-field="gender" value="Male" required><label data-for="gender-male">Male</label>'+
+    '<input type="radio" data-field="gender" value="Female"><label data-for="gender-female">Female</label>'+
+    '<input type="radio" data-field="gender" value="Other"><label data-for="gender-other">Other</label>'+
+  '</div></div>'+
+  '<div class="fg"><label>Is Awesome?</label><div class="cg"><input type="checkbox" data-field="awesome"><label data-for="awesome" style="margin-bottom:0;">Yes</label></div></div>'+
+  '<div class="fg"><label data-for="bot">Favorite Bot Type</label><select data-field="bot" required>'+
+    '<option value="">Select...</option><option>Task Bot</option><option>Automation Co-Pilot</option><option>AI Guardrails</option><option>Enterprise Knowledge</option><option>Document Automation</option>'+
+  '</select></div>'+
+  '<div class="act"><div role="button" tabindex="0" class="divbtn">Add Person</div></div>'+
+'</form>';
+var f=root.querySelector('form');
+function suf(){return Math.random().toString(36).slice(2,7);}
+function applyIds(){
+  var s=suf();
+  f.querySelectorAll('[data-field]').forEach(function(el){
+    var b=el.getAttribute('data-field');
+    el.id=b+'_'+s;
+    if(el.type==='radio'){el.name='gender_'+s;}else{el.name=b+'_'+s;}
+  });
+  f.querySelectorAll('[data-for]').forEach(function(l){
+    l.setAttribute('for',l.getAttribute('data-for')+'_'+s);
+  });
+}
+applyIds();
+var btn=f.querySelector('[role=button]');
+function submit(){
+  var q=f.querySelector.bind(f);
+  var g=q('input[type=radio]:checked');
+  var row={name:q('[data-field=name]').textContent.trim(),country:q('[data-field=country]').textContent.trim(),feature:q('[data-field=feature]').textContent.trim(),gender:g?g.value:'',awesome:q('[data-field=awesome]').checked,bot:q('[data-field=bot]').value};
+  if(!row.name||!row.country||!row.feature||!row.gender||!row.bot)return;
+  rows.push(row);render();
+  q('[data-field=name]').textContent='';q('[data-field=country]').textContent='';q('[data-field=feature]').textContent='';
+  q('[data-field=awesome]').checked=false;
+  q('input[type=radio]').forEach(function(r){r.checked=false;});
+}
+btn.addEventListener('click',submit);
+btn.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();submit();}});
+f.addEventListener('submit',function(e){e.preventDefault();submit();});
+function render(){
+  var l=document.getElementById('list');
+  if(!rows.length){l.innerHTML='<div class="empty">No people yet. Add someone above.</div>';return;}
+  var h='<table><thead><tr><th>Name</th><th>Country</th><th>Feature</th><th>Gender</th><th>Awesome</th><th>Bot Type</th></tr></thead><tbody>';
+  for(var i=0;i<rows.length;i++){var r=rows[i];h+='<tr><td>'+r.name+'</td><td>'+r.country+'</td><td>'+r.feature+'</td><td>'+r.gender+'</td><td>'+(r.awesome?'Yes':'No')+'</td><td>'+r.bot+'</td></tr>';}
+  h+='</tbody></table>';l.innerHTML=h;
+}
+render();
+<\/script>
+</body></html>
+</script>
+<script>
+    var innerHtml = document.getElementById('inner-doc').textContent.replace(/<\\\/script>/g, '<\/script>');
+    var innerEscaped = JSON.stringify(innerHtml).replace(/<\//g, '<\\/');
+    var outerFrame = document.getElementById('outer');
+    outerFrame.sandbox = 'allow-scripts allow-same-origin';
+    outerFrame.srcdoc =
+        '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' +
+        '<p style="font-family:Arial;color:#005288;margin:0 0 8px;font-weight:600;">Outer frame. Inner frame below:</p>' +
+        '<iframe id="inner" style="width:100%;height:480px;border:1px solid #b6d2e6;border-radius:4px;background:#fff;"></iframe>' +
+        '<script>document.getElementById("inner").srcdoc=' + innerEscaped + ';<\/script>' +
+        '</body></html>';
+</script>
+</body>
+</html>

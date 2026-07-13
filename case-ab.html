@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Case A+B — srcdoc iframe + sandbox</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Case A+B — srcdoc iframe + sandbox</h1>
+    <p class="desc">
+        The form lives in an <code>&lt;iframe srcdoc&gt;</code> with
+        <code>sandbox="allow-scripts allow-forms allow-same-origin"</code>.
+        The recorder cannot navigate to the frame by URL (there is none), and cross-frame
+        DOM probing from the parent page is restricted by the sandbox.
+    </p>
+    <div class="frame-wrap">
+        <iframe id="frame" title="A+B srcdoc sandbox"></iframe>
+    </div>
+    <a class="back" href="index.html">&larr; Back to Main Menu</a>
+</div>
+<script type="text/html" id="inner-doc">
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"></head>
+<body>
+<form id="f" autocomplete="off">
+    <div class="fg"><label for="name">Name</label><input id="name" name="name" type="text" maxlength="40" required></div>
+    <div class="fg"><label for="country">Country</label><input id="country" name="country" type="text" maxlength="32" required></div>
+    <div class="fg"><label for="feature">Favorite Automation Feature</label><input id="feature" name="feature" type="text" maxlength="64" required></div>
+    <div class="fg"><label>Gender</label><div class="rg">
+        <input type="radio" id="male" name="gender" value="Male" required><label for="male">Male</label>
+        <input type="radio" id="female" name="gender" value="Female"><label for="female">Female</label>
+        <input type="radio" id="other" name="gender" value="Other"><label for="other">Other</label>
+    </div></div>
+    <div class="fg"><label>Is Awesome?</label><div class="cg"><input type="checkbox" id="awesome" name="awesome"><label for="awesome" style="margin-bottom:0;">Yes</label></div></div>
+    <div class="fg"><label for="bot">Favorite Bot Type</label><select id="bot" name="bot" required>
+        <option value="">Select...</option><option>Task Bot</option><option>Automation Co-Pilot</option><option>AI Guardrails</option><option>Enterprise Knowledge</option><option>Document Automation</option>
+    </select></div>
+    <div class="act"><button type="submit">Add Person</button></div>
+</form>
+<div id="list"></div>
+<script>
+var rows=[];
+var f=document.getElementById('f');
+f.addEventListener('submit',function(e){
+  e.preventDefault();
+  var row={name:f.elements.name.value.trim(),country:f.elements.country.value.trim(),feature:f.elements.feature.value.trim(),gender:f.elements.gender.value,awesome:f.elements.awesome.checked,bot:f.elements.bot.value};
+  if(!row.name||!row.country||!row.feature||!row.gender||!row.bot)return;
+  rows.push(row);render();f.reset();
+});
+function render(){
+  var l=document.getElementById('list');
+  if(!rows.length){l.innerHTML='<div class="empty">No people yet. Add someone above.</div>';return;}
+  var h='<table><thead><tr><th>Name</th><th>Country</th><th>Feature</th><th>Gender</th><th>Awesome</th><th>Bot Type</th></tr></thead><tbody>';
+  for(var i=0;i<rows.length;i++){var r=rows[i];h+='<tr><td>'+r.name+'</td><td>'+r.country+'</td><td>'+r.feature+'</td><td>'+r.gender+'</td><td>'+(r.awesome?'Yes':'No')+'</td><td>'+r.bot+'</td></tr>';}
+  h+='</tbody></table>';l.innerHTML=h;
+}
+render();
+<\/script>
+</body></html>
+</script>
+<script>
+    var frame = document.getElementById('frame');
+    frame.sandbox = 'allow-scripts allow-forms allow-same-origin';
+    frame.srcdoc = document.getElementById('inner-doc').textContent.replace(/<\\\/script>/g, '<\/script>');
+</script>
+</body>
+</html>

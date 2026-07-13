@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main Menu</title>
+    <title>AA Forms — Automation Recorder Training</title>
     <style>
         body {
             background: #f3f3f3;
@@ -16,7 +16,7 @@
             background: #fff;
             border: 1px solid #d1d5db;
             border-radius: 6px;
-            padding: 48px 32px 48px 32px;
+            padding: 40px 32px 48px 32px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -25,19 +25,65 @@
             font-size: 1.7em;
             color: #005288;
             font-weight: 500;
-            margin-bottom: 36px;
+            margin: 0 0 6px 0;
+            text-align: center;
+        }
+        .subtitle {
+            color: #7d8590;
+            font-size: 0.95em;
+            margin: 0 0 28px 0;
+            text-align: center;
+        }
+        .readme {
+            width: 100%;
+            background: #e7f3fa;
+            border: 1px solid #b6d2e6;
+            border-radius: 6px;
+            padding: 18px 22px;
+            margin-bottom: 32px;
+            color: #1a2328;
+            font-size: 0.97em;
+            line-height: 1.55;
+            box-sizing: border-box;
+        }
+        .readme h2 {
+            color: #005288;
+            font-size: 1.08em;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+        .readme p {
+            margin: 0 0 10px 0;
+        }
+        .readme p:last-child {
+            margin-bottom: 0;
+        }
+        .readme ul {
+            margin: 6px 0 10px 0;
+            padding-left: 20px;
+        }
+        .readme li {
+            margin-bottom: 4px;
+        }
+        .readme code {
+            background: #fff;
+            border: 1px solid #b6d2e6;
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-size: 0.9em;
+            color: #005288;
         }
         .sap-link {
             display: block;
-            width: 260px;
-            margin: 12px 0;
-            padding: 14px 0;
+            width: 420px;
+            margin: 10px 0;
+            padding: 13px 0;
             text-align: center;
             background: #e7f3fa;
             color: #005288;
             border: 1px solid #b6d2e6;
             border-radius: 4px;
-            font-size: 1.08em;
+            font-size: 1em;
             font-weight: 600;
             text-decoration: none;
             transition: background 0.2s, color 0.2s;
@@ -49,13 +95,55 @@
         @media (max-width: 650px) {
             .container {padding: 12px;}
             .sap-link {width: 100%;}
+            .readme {padding: 14px;}
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Main Menu</h1>
-    <a class="sap-link" href="form.html">Forms</a>
+    <h1>AA Forms — Automation Recorder Training</h1>
+    <p class="subtitle">Local test site for learning and testing web automation recorder tools</p>
+
+    <div class="readme">
+        <h2>Objective</h2>
+        <p>
+            This site exists for <strong>learning to use automation recorder tools</strong>
+            (such as Automation Anywhere's web recorder) and for <strong>testing</strong> how
+            they behave against real-world pages that are deliberately difficult to automate.
+        </p>
+        <p>The plain <code>form.html</code> is a normal SAP-style form — the easy case.
+        Each <code>case-*.html</code> page below applies one technique (or all of them) that
+        commonly breaks recorders, so you can practice handling them:</p>
+        <ul>
+            <li><strong>srcdoc + sandbox</strong> — iframe with no URL to navigate to</li>
+            <li><strong>runtime-built DOM</strong> — fields created by JS after load</li>
+            <li><strong>randomized IDs</strong> — change on every load</li>
+            <li><strong>vision fallback</strong> — 1800 off-screen decoys push the target past the labeled-DOM size limit, forcing screenshot-based selection</li>
+            <li><strong>shadow DOM</strong> — fields hidden behind a shadow boundary</li>
+            <li><strong>contenteditable divs</strong> — instead of <code>&lt;input&gt;</code></li>
+            <li><strong>no IDs, addEventListener only</strong> — no stable selector anchors</li>
+            <li><strong>div submit button</strong> — a <code>&lt;div&gt;</code> acting as the submit button</li>
+            <li><strong>nested iframe</strong> — a frame inside a frame</li>
+            <li><strong>all techniques stacked</strong> — every technique above combined</li>
+        </ul>
+        <p>
+            Run the local server with <code>node server.js</code> and open
+            <code>http://localhost:8000</code>. Record against each section, observe where the
+            recorder fails, then figure out the workaround — that is the point of this site.
+        </p>
+    </div>
+
+    <a class="sap-link" href="form.html">Forms (easy case)</a>
+    <a class="sap-link" href="case-ab.html">srcdoc + sandbox</a>
+    <a class="sap-link" href="case-c.html">runtime-built DOM</a>
+    <a class="sap-link" href="case-d.html">randomized IDs</a>
+    <a class="sap-link" href="vision-fallback.html">vision fallback</a>
+    <a class="sap-link" href="case-e.html">shadow DOM</a>
+    <a class="sap-link" href="case-f.html">contenteditable divs</a>
+    <a class="sap-link" href="case-g.html">no IDs, addEventListener only</a>
+    <a class="sap-link" href="case-h.html">div submit button</a>
+    <a class="sap-link" href="case-i.html">nested iframe</a>
+    <a class="sap-link" href="case-all.html">all techniques stacked</a>
     <a class="sap-link" href="scrapping.html">Scrapping</a>
     <a class="sap-link" href="#">WIP</a>
 </div>
