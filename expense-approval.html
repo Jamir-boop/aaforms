@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Expense Approval Center</title>
+    <style>
+        :root {
+            --navy: #15324b;
+            --blue: #0875b9;
+            --blue-dark: #00588f;
+            --blue-soft: #eaf4fa;
+            --ink: #1d2a35;
+            --muted: #607080;
+            --line: #d7e0e7;
+            --surface: #ffffff;
+            --canvas: #f4f7f9;
+            --green: #18794e;
+            --green-soft: #eaf7f0;
+            --red: #b42318;
+            --red-soft: #fff0ee;
+            --amber: #946200;
+            --shadow: 0 10px 28px rgba(24, 49, 72, 0.08);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--canvas);
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.45;
+        }
+
+        .topbar {
+            background: var(--navy);
+            color: #fff;
+            min-height: 64px;
+        }
+
+        .topbar-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 24px;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 7px;
+            background: #fff;
+            color: var(--navy);
+            font-size: 0.83rem;
+        }
+
+        .environment {
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 999px;
+            padding: 5px 11px;
+            color: #dceaf3;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .language-select {
+            width: auto;
+            min-width: 104px;
+            padding: 7px 28px 7px 9px;
+            border: 1px solid rgba(255,255,255,.45);
+            background: #fff;
+            color: var(--navy);
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        .topbar .hint { color: #dceaf3; }
+
+        main {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 30px 24px 48px;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 22px;
+        }
+
+        h1 {
+            margin: 0 0 5px;
+            color: var(--navy);
+            font-size: clamp(1.65rem, 4vw, 2.2rem);
+            font-weight: 650;
+            letter-spacing: -.025em;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            max-width: 700px;
+        }
+
+        .back-link {
+            color: var(--blue-dark);
+            font-size: .9rem;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(300px, .75fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            padding: 20px 22px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card-header h2,
+        .history-head h2 {
+            margin: 0;
+            color: var(--navy);
+            font-size: 1.12rem;
+        }
+
+        .eyebrow {
+            color: var(--blue-dark);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        form { padding: 22px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-wide { grid-column: 1 / -1; }
+
+        label {
+            color: var(--navy);
+            font-size: .88rem;
+            font-weight: 700;
+        }
+
+        .required { color: var(--red); }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #b8c6d0;
+            border-radius: 5px;
+            background: #fbfcfd;
+            color: var(--ink);
+            font: inherit;
+            padding: 10px 11px;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+        textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(8, 117, 185, .13);
+            background: #fff;
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: .78rem;
+        }
+
+        .requester-card {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 14px;
+            border: 1px solid #c5dbe8;
+            border-radius: 6px;
+            background: var(--blue-soft);
+            color: var(--navy);
+            font-size: .87rem;
+        }
+
+        .requester-card strong { display: block; }
+        .requester-meta { color: var(--muted); text-align: right; }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 5px;
+            padding: 10px 19px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .primary:hover { background: var(--blue-dark); }
+
+        .secondary {
+            background: #fff;
+            color: var(--blue-dark);
+            border: 1px solid #a9c9dc;
+        }
+
+        .secondary:hover { background: var(--blue-soft); }
+
+        .decision-card {
+            position: sticky;
+            top: 18px;
+            overflow: hidden;
+        }
+
+        .decision-body { padding: 22px; }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border-radius: 999px;
+            padding: 6px 11px;
+            font-size: .8rem;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-ready { background: var(--blue-soft); color: var(--blue-dark); }
+        .status-approved { background: var(--green-soft); color: var(--green); }
+        .status-rejected { background: var(--red-soft); color: var(--red); }
+
+        .decision-title {
+            margin: 16px 0 4px;
+            color: var(--navy);
+            font-size: 1.35rem;
+        }
+
+        .decision-reason {
+            min-height: 48px;
+            margin: 0;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .result-list {
+            margin: 18px 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: .86rem;
+        }
+
+        .result-row span:first-child { color: var(--muted); }
+        .result-row strong { text-align: right; overflow-wrap: anywhere; }
+
+        .checks {
+            margin: 16px 0 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 7px;
+        }
+
+        .checks li {
+            display: flex;
+            gap: 8px;
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        .checks li::before { content: "—"; color: #92a1ac; }
+        .checks li.pass::before { content: "✓"; color: var(--green); font-weight: 800; }
+        .checks li.fail::before { content: "×"; color: var(--red); font-weight: 800; }
+
+        .machine-output {
+            margin-top: 16px;
+            padding: 11px;
+            border-radius: 5px;
+            background: #f2f5f7;
+            color: #354656;
+            font: .76rem Consolas, monospace;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .history {
+            margin-top: 22px;
+            overflow: hidden;
+        }
+
+        .history-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .history-head button {
+            padding: 7px 12px;
+            color: var(--blue-dark);
+            background: var(--blue-soft);
+            border: 1px solid #c5dbe8;
+            font-size: .78rem;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 940px;
+        }
+
+        th,
+        td {
+            padding: 11px 13px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+            font-size: .82rem;
+        }
+
+        th {
+            background: #edf4f8;
+            color: var(--navy);
+            font-size: .75rem;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+
+        tbody tr:hover { background: #f8fbfc; }
+        td.purpose { max-width: 260px; }
+
+        .table-status {
+            font-weight: 800;
+            text-transform: capitalize;
+        }
+
+        .table-status.approved { color: var(--green); }
+        .table-status.rejected { color: var(--red); }
+
+        .empty {
+            padding: 30px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; }
+            .decision-card { position: static; }
+        }
+
+        @media (max-width: 620px) {
+            main { padding: 22px 12px 36px; }
+            .topbar-inner { padding: 0 14px; }
+            .environment { display: none; }
+            .page-heading { align-items: flex-start; flex-direction: column; }
+            .form-grid { grid-template-columns: 1fr; }
+            .field-wide,
+            .requester-card { grid-column: auto; }
+            .requester-card { flex-direction: column; }
+            .requester-meta { text-align: left; }
+            form,
+            .decision-body { padding: 17px; }
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <div class="topbar-inner">
+        <div class="brand">
+            <span class="brand-mark">EX</span>
+            <span data-i18n="brand">Northstar Expense Operations</span>
+        </div>
+        <div class="topbar-actions">
+            <span class="environment" data-i18n="environment">Demo environment</span>
+            <label for="language-select" class="hint" data-i18n="languageLabel">Language</label>
+            <select class="language-select" id="language-select" aria-label="Language">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="page-heading">
+        <div>
+            <h1 data-i18n="pageTitle">Expense Approval Center</h1>
+            <p class="subtitle" data-i18n="pageSubtitle">Submit confirmed employee expenses for an immediate policy and budget decision.</p>
+        </div>
+        <a class="back-link" href="index.html" data-i18n="back">← Recorder training home</a>
+    </div>
+
+    <section class="layout" aria-label="Expense request workspace">
+        <article class="card">
+            <div class="card-header">
+                <div class="eyebrow" data-i18n="newRequest">New request</div>
+                <h2 data-i18n="expenseDetails">Expense details</h2>
+            </div>
+            <form id="expense-form" autocomplete="off">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="job-id"><span data-i18n="jobId">Job ID</span> <span class="required">*</span></label>
+                        <input id="job-id" name="jobId" type="text" maxlength="80" autocomplete="off"
+                               data-i18n-placeholder="jobPlaceholder" required>
+                        <span class="hint" data-i18n="jobHint">Unique correlation ID supplied by the automation adapter.</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="requester-phone"><span data-i18n="requesterPhone">Requester phone</span> <span class="required">*</span></label>
+                        <input id="requester-phone" name="requesterPhone" type="tel"
+                               pattern="\+[1-9][0-9]{7,14}" maxlength="16"
+                               autocomplete="off" data-i18n-placeholder="phonePlaceholder" required>
+                        <span class="hint" data-i18n="phoneHint">E.164 caller number supplied by Twilio.</span>
+                    </div>
+
+                    <div class="requester-card" id="requester-profile" aria-live="polite">
+                        <div>
+                            <strong id="requester-name">—</strong>
+                            <span id="requester-role" data-i18n="awaitingPhone">Enter a requester phone</span>
+                        </div>
+                        <div class="requester-meta">
+                            <strong id="requester-department">—</strong>
+                            <span id="requester-budget">—</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="amount"><span data-i18n="amount">Amount</span> <span class="required">*</span></label>
+                        <input id="amount" name="amount" type="number" min="0.01" max="999999999"
+                               step="0.01" autocomplete="off" data-i18n-placeholder="amountPlaceholder" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="currency"><span data-i18n="currency">Currency</span> <span class="required">*</span></label>
+                        <select id="currency" name="currency" required>
+                            <option value="" selected data-i18n="selectCurrency">Select currency...</option>
+                            <option value="USD" data-i18n="currencyUsd">USD — US Dollar</option>
+                            <option value="COP" data-i18n="currencyCop">COP — Colombian Peso</option>
+                            <option value="EUR" data-i18n="currencyEur">EUR — Euro</option>
+                            <option value="GBP" data-i18n="currencyGbp">GBP — British Pound</option>
+                        </select>
+                    </div>
+
+                    <div class="field field-wide">
+                        <label for="purpose"><span data-i18n="purpose">Business purpose</span> <span class="required">*</span></label>
+                        <textarea id="purpose" name="purpose" minlength="10" maxlength="300"
+                                  autocomplete="off" data-i18n-placeholder="purposePlaceholder" required></textarea>
+                        <span class="hint" data-i18n="purposeHint">Describe the clear business reason. Personal and restricted expenses are rejected.</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="primary" id="submit-expense" type="submit" data-i18n="submit">Create and submit request</button>
+                    <button class="secondary" id="new-request" type="button" data-i18n="clear">Clear form</button>
+                </div>
+            </form>
+        </article>
+
+        <aside class="card decision-card" aria-labelledby="decision-heading">
+            <div class="card-header">
+                <div class="eyebrow" data-i18n="decisionEngine">Decision engine</div>
+                <h2 id="decision-heading" data-i18n="submissionResult">Submission result</h2>
+            </div>
+            <div class="decision-body">
+                <span class="status status-ready" id="decision-status" data-i18n="ready">Ready</span>
+                <h3 class="decision-title" id="decision-title" data-i18n="awaitingSubmission">Awaiting submission</h3>
+                <p class="decision-reason" id="decision-reason" data-i18n="awaitingDescription">
+                    Complete the request and submit it to run the policy checks.
+                </p>
+
+                <div class="result-list">
+                    <div class="result-row">
+                        <span data-i18n="reference">Reference</span>
+                        <strong id="decision-reference">—</strong>
+                    </div>
+                    <div class="result-row">
+                        <span data-i18n="evaluatedAmount">Evaluated amount</span>
+                        <strong id="decision-amount">—</strong>
+                    </div>
+                    <div class="result-row">
+                        <span data-i18n="decisionTime">Decision time</span>
+                        <strong id="decision-timestamp">—</strong>
+                    </div>
+                </div>
+
+                <ul class="checks" id="decision-checks">
+                    <li data-i18n="checkPolicy">Policy eligibility</li>
+                    <li data-i18n="checkDuplicate">Duplicate protection</li>
+                    <li data-i18n="checkLimits">Transaction and department limits</li>
+                    <li data-i18n="checkBudget">Available monthly budget</li>
+                </ul>
+
+                <pre class="machine-output" id="decision-output" aria-label="TaskBot-readable decision output">{"status":"ready"}</pre>
+            </div>
+        </aside>
+    </section>
+
+    <section class="card history" aria-labelledby="history-heading">
+        <div class="history-head">
+            <div>
+                <div class="eyebrow" data-i18n="auditTrail">Audit trail</div>
+                <h2 id="history-heading" data-i18n="historyTitle">Expense request history</h2>
+            </div>
+            <button id="reset-history" type="button" data-i18n="resetData">Reset demo data</button>
+        </div>
+        <div class="table-wrap" id="history-table"></div>
+    </section>
+</main>
+
+<script src="expense-rules.js"></script>
+<script>
+    (function () {
+        'use strict';
+
+        const STORAGE_KEY = 'aa_expense_requests_v2';
+        const LANGUAGE_KEY = 'aa_expense_language';
+        const messages = {
+            en: {
+                documentTitle: 'Expense Approval Center',
+                brand: 'Northstar Expense Operations',
+                environment: 'Demo environment',
+                languageLabel: 'Language',
+                pageTitle: 'Expense Approval Center',
+                pageSubtitle: 'Submit confirmed employee expenses for an immediate policy and budget decision.',
+                back: '← Recorder training home',
+                newRequest: 'New request',
+                expenseDetails: 'Expense details',
+                jobId: 'Job ID',
+                jobPlaceholder: 'e.g. job-7f91a2',
+                jobHint: 'Unique correlation ID supplied by the automation adapter.',
+                requesterPhone: 'Requester phone',
+                phonePlaceholder: 'e.g. +573001234567',
+                phoneHint: 'E.164 caller number supplied by Twilio.',
+                awaitingPhone: 'Enter a requester phone',
+                defaultRequester: 'Voice Demo Requester',
+                amount: 'Amount',
+                amountPlaceholder: '0.00',
+                currency: 'Currency',
+                selectCurrency: 'Select currency...',
+                currencyUsd: 'USD — US Dollar',
+                currencyCop: 'COP — Colombian Peso',
+                currencyEur: 'EUR — Euro',
+                currencyGbp: 'GBP — British Pound',
+                purpose: 'Business purpose',
+                purposePlaceholder: 'Describe the business reason for this expense',
+                purposeHint: 'Describe the clear business reason. Personal and restricted expenses are rejected.',
+                submit: 'Create and submit request',
+                clear: 'Clear form',
+                decisionEngine: 'Decision engine',
+                submissionResult: 'Submission result',
+                ready: 'Ready',
+                awaitingSubmission: 'Awaiting submission',
+                awaitingDescription: 'Complete the request and submit it to run the policy checks.',
+                reference: 'Reference',
+                evaluatedAmount: 'Evaluated amount',
+                decisionTime: 'Decision time',
+                checkPolicy: 'Policy eligibility',
+                checkDuplicate: 'Duplicate protection',
+                checkLimits: 'Transaction and department limits',
+                checkBudget: 'Available monthly budget',
+                auditTrail: 'Audit trail',
+                historyTitle: 'Expense request history',
+                resetData: 'Reset demo data',
+                noRequests: 'No expense requests have been submitted.',
+                requestApproved: 'Request approved',
+                requestRejected: 'Request rejected',
+                status_approved: 'Approved',
+                status_rejected: 'Rejected',
+                budgetAvailable: 'USD {amount} monthly budget available',
+                role_salesManager: 'Regional Account Manager',
+                role_engineeringManager: 'Software Engineering Manager',
+                role_financeAnalyst: 'Senior Financial Analyst',
+                role_verifiedCaller: 'Verified caller',
+                department_sales: 'Sales',
+                department_engineering: 'Engineering',
+                department_finance: 'Finance',
+                department_operations: 'General Operations',
+                check_policy: 'Policy eligibility',
+                check_duplicate: 'Duplicate protection',
+                check_companyCap: 'Company transaction cap',
+                check_departmentLimit: '{department} auto-approval limit',
+                check_monthlyBudget: 'Available monthly budget',
+                reason_approved: 'Approved automatically: the request passed policy, duplicate, limit, and budget checks.',
+                reason_restricted: 'The purpose contains a non-reimbursable or restricted expense.',
+                reason_duplicate: 'A matching approved request was submitted within the last 24 hours.',
+                reason_companyCap: 'The request exceeds the company transaction cap of USD {limit}.',
+                reason_departmentLimit: 'The request exceeds the {department} auto-approval limit of USD {limit}.',
+                reason_monthlyBudget: 'The request exceeds the requester’s remaining monthly budget of USD {limit}.',
+                error_invalidAmount: 'Amount must be greater than zero.',
+                error_unsupportedCurrency: 'Unsupported currency.',
+                error_shortPurpose: 'Business purpose must contain at least 10 characters.',
+                tableReference: 'Reference',
+                tableRequester: 'Requester',
+                tableExpense: 'Expense',
+                tablePurpose: 'Business purpose',
+                tableDecision: 'Decision',
+                tableReason: 'Reason',
+                tableSubmitted: 'Submitted'
+            },
+            es: {
+                documentTitle: 'Centro de aprobación de gastos',
+                brand: 'Operaciones de Gastos Northstar',
+                environment: 'Entorno de demostración',
+                languageLabel: 'Idioma',
+                pageTitle: 'Centro de aprobación de gastos',
+                pageSubtitle: 'Envía gastos confirmados para recibir una decisión inmediata basada en políticas y presupuesto.',
+                back: '← Inicio de entrenamiento',
+                newRequest: 'Nueva solicitud',
+                expenseDetails: 'Datos del gasto',
+                jobId: 'ID del trabajo',
+                jobPlaceholder: 'Ej. job-7f91a2',
+                jobHint: 'Identificador único proporcionado por el adaptador de automatización.',
+                requesterPhone: 'Teléfono del solicitante',
+                phonePlaceholder: 'Ej. +573001234567',
+                phoneHint: 'Número E.164 proporcionado por Twilio.',
+                awaitingPhone: 'Ingresa el teléfono del solicitante',
+                defaultRequester: 'Solicitante de demostración de voz',
+                amount: 'Importe',
+                amountPlaceholder: '0,00',
+                currency: 'Moneda',
+                selectCurrency: 'Selecciona una moneda...',
+                currencyUsd: 'USD — Dólar estadounidense',
+                currencyCop: 'COP — Peso colombiano',
+                currencyEur: 'EUR — Euro',
+                currencyGbp: 'GBP — Libra esterlina',
+                purpose: 'Propósito empresarial',
+                purposePlaceholder: 'Describe el motivo empresarial del gasto',
+                purposeHint: 'Describe un motivo empresarial claro. Los gastos personales o restringidos serán rechazados.',
+                submit: 'Crear y enviar solicitud',
+                clear: 'Limpiar formulario',
+                decisionEngine: 'Motor de decisión',
+                submissionResult: 'Resultado de la solicitud',
+                ready: 'Listo',
+                awaitingSubmission: 'Esperando solicitud',
+                awaitingDescription: 'Completa y envía la solicitud para ejecutar las validaciones.',
+                reference: 'Referencia',
+                evaluatedAmount: 'Importe evaluado',
+                decisionTime: 'Hora de decisión',
+                checkPolicy: 'Elegibilidad según políticas',
+                checkDuplicate: 'Protección contra duplicados',
+                checkLimits: 'Límites de transacción y departamento',
+                checkBudget: 'Presupuesto mensual disponible',
+                auditTrail: 'Historial de auditoría',
+                historyTitle: 'Historial de solicitudes de gasto',
+                resetData: 'Restablecer datos de prueba',
+                noRequests: 'No se han enviado solicitudes de gasto.',
+                requestApproved: 'Solicitud aprobada',
+                requestRejected: 'Solicitud rechazada',
+                status_approved: 'Aprobada',
+                status_rejected: 'Rechazada',
+                budgetAvailable: 'USD {amount} disponibles en el presupuesto mensual',
+                role_salesManager: 'Gerente regional de cuentas',
+                role_engineeringManager: 'Gerente de ingeniería de software',
+                role_financeAnalyst: 'Analista financiera sénior',
+                role_verifiedCaller: 'Llamante verificado',
+                department_sales: 'Ventas',
+                department_engineering: 'Ingeniería',
+                department_finance: 'Finanzas',
+                department_operations: 'Operaciones generales',
+                check_policy: 'Elegibilidad según políticas',
+                check_duplicate: 'Protección contra duplicados',
+                check_companyCap: 'Límite corporativo por transacción',
+                check_departmentLimit: 'Límite de aprobación automática de {department}',
+                check_monthlyBudget: 'Presupuesto mensual disponible',
+                reason_approved: 'Aprobada automáticamente: la solicitud pasó las validaciones de políticas, duplicados, límites y presupuesto.',
+                reason_restricted: 'El propósito contiene un gasto restringido o no reembolsable.',
+                reason_duplicate: 'Se envió una solicitud aprobada equivalente durante las últimas 24 horas.',
+                reason_companyCap: 'La solicitud supera el límite corporativo de USD {limit} por transacción.',
+                reason_departmentLimit: 'La solicitud supera el límite de aprobación automática de {department}, que es de USD {limit}.',
+                reason_monthlyBudget: 'La solicitud supera el presupuesto mensual restante de USD {limit}.',
+                error_invalidAmount: 'El importe debe ser mayor que cero.',
+                error_unsupportedCurrency: 'Moneda no admitida.',
+                error_shortPurpose: 'El propósito empresarial debe contener al menos 10 caracteres.',
+                tableReference: 'Referencia',
+                tableRequester: 'Solicitante',
+                tableExpense: 'Gasto',
+                tablePurpose: 'Propósito empresarial',
+                tableDecision: 'Decisión',
+                tableReason: 'Motivo',
+                tableSubmitted: 'Enviada'
+            }
+        };
+        const rememberedLanguage = localStorage.getItem(LANGUAGE_KEY);
+        let language = rememberedLanguage === 'en' || rememberedLanguage === 'es'
+            ? rememberedLanguage
+            : ((navigator.languages || [navigator.language]).some(function (value) {
+                return String(value).toLowerCase().startsWith('es');
+            }) ? 'es' : 'en');
+        let currentDecision = null;
+
+        function t(key, params) {
+            let text = messages[language][key] || messages.en[key] || key;
+            Object.keys(params || {}).forEach(function (name) {
+                text = text.replaceAll('{' + name + '}', params[name]);
+            });
+            return text;
+        }
+
+        function locale() {
+            return language === 'es' ? 'es-CO' : 'en-US';
+        }
+
+        const profiles = {
+            '+573001234567': {
+                name: 'Lucía Torres',
+                roleKey: 'salesManager',
+                departmentKey: 'sales',
+                autoApprovalLimitUsd: 1500,
+                remainingBudgetUsd: 4200
+            },
+            '+14155550123': {
+                name: 'Marcus Reed',
+                roleKey: 'engineeringManager',
+                departmentKey: 'engineering',
+                autoApprovalLimitUsd: 2500,
+                remainingBudgetUsd: 8600
+            },
+            '+442079460123': {
+                name: 'Hannah Clarke',
+                roleKey: 'financeAnalyst',
+                departmentKey: 'finance',
+                autoApprovalLimitUsd: 750,
+                remainingBudgetUsd: 1900
+            }
+        };
+        const defaultProfile = {
+            nameKey: 'defaultRequester',
+            roleKey: 'verifiedCaller',
+            departmentKey: 'operations',
+            autoApprovalLimitUsd: 1000,
+            remainingBudgetUsd: 3000
+        };
+        const seedRequests = [
+            {
+                jobId: 'job-demo-previous-01',
+                requesterPhone: '+14155550123',
+                requesterName: 'Marcus Reed',
+                amount: 640,
+                currency: 'USD',
+                purpose: 'Cloud architecture workshop registration',
+                status: 'approved',
+                referenceNumber: 'EXP-20260717-A8F21C',
+                reasonCode: 'approved',
+                reasonParams: {},
+                amountUsd: 640,
+                createdAt: '2026-07-17T16:32:00.000Z',
+                checks: []
+            },
+            {
+                jobId: 'job-demo-previous-02',
+                requesterPhone: '+442079460123',
+                requesterName: 'Hannah Clarke',
+                amount: 925,
+                currency: 'GBP',
+                purpose: 'Finance leadership offsite venue deposit',
+                status: 'rejected',
+                referenceNumber: 'EXP-20260716-C42D90',
+                reasonCode: 'departmentLimit',
+                reasonParams: { departmentKey: 'finance', limit: 750 },
+                amountUsd: 1174.75,
+                createdAt: '2026-07-16T13:18:00.000Z',
+                checks: []
+            },
+            {
+                jobId: 'job-demo-previous-03',
+                requesterPhone: '+573001234567',
+                requesterName: 'Lucía Torres',
+                amount: 285000,
+                currency: 'COP',
+                purpose: 'Airport transportation for customer workshop',
+                status: 'approved',
+                referenceNumber: 'EXP-20260715-7B319E',
+                reasonCode: 'approved',
+                reasonParams: {},
+                amountUsd: 71.25,
+                createdAt: '2026-07-15T20:44:00.000Z',
+                checks: []
+            }
+        ];
+
+        const form = document.getElementById('expense-form');
+        const phoneInput = document.getElementById('requester-phone');
+
+        function loadRequests() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                if (Array.isArray(saved)) return saved;
+            } catch (_) {}
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(seedRequests));
+            return seedRequests.slice();
+        }
+
+        function saveRequests(requests) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
+        }
+
+        function getProfile(phone) {
+            return phone ? profiles[phone] || defaultProfile : null;
+        }
+
+        function updateProfile() {
+            const profile = getProfile(phoneInput.value.trim());
+            if (!profile) {
+                document.getElementById('requester-name').textContent = '—';
+                document.getElementById('requester-role').textContent = t('awaitingPhone');
+                document.getElementById('requester-department').textContent = '—';
+                document.getElementById('requester-budget').textContent = '—';
+                return;
+            }
+            document.getElementById('requester-name').textContent = profile.name || t(profile.nameKey);
+            document.getElementById('requester-role').textContent = t('role_' + profile.roleKey);
+            document.getElementById('requester-department').textContent = t('department_' + profile.departmentKey);
+            document.getElementById('requester-budget').textContent =
+                t('budgetAvailable', { amount: profile.remainingBudgetUsd.toLocaleString(locale()) });
+        }
+
+        function referenceNumber() {
+            const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            const suffix = crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
+            return 'EXP-' + date + '-' + suffix;
+        }
+
+        function money(amount, currency) {
+            return new Intl.NumberFormat(locale(), {
+                style: 'currency',
+                currency: currency,
+                maximumFractionDigits: currency === 'COP' ? 0 : 2
+            }).format(amount);
+        }
+
+        function dateTime(value) {
+            return new Intl.DateTimeFormat(locale(), {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            }).format(new Date(value));
+        }
+
+        function translatedParams(params) {
+            const values = Object.assign({}, params || {});
+            if (values.departmentKey) values.department = t('department_' + values.departmentKey);
+            if (values.limit !== undefined) values.limit = Number(values.limit).toLocaleString(locale());
+            return values;
+        }
+
+        function reasonText(record) {
+            return t('reason_' + record.reasonCode, translatedParams(record.reasonParams));
+        }
+
+        function checkText(check) {
+            return t('check_' + check.code, translatedParams(check.params));
+        }
+
+        function setDecision(record, emitDecision) {
+            currentDecision = record;
+            const status = document.getElementById('decision-status');
+            status.className = 'status status-' + record.status;
+            status.textContent = t('status_' + record.status);
+            document.getElementById('decision-title').textContent =
+                t(record.status === 'approved' ? 'requestApproved' : 'requestRejected');
+            document.getElementById('decision-reason').textContent = reasonText(record);
+            document.getElementById('decision-reference').textContent = record.referenceNumber;
+            document.getElementById('decision-amount').textContent =
+                money(record.amount, record.currency) + ' · USD ' + record.amountUsd.toLocaleString(locale());
+            document.getElementById('decision-timestamp').textContent = dateTime(record.createdAt);
+
+            const checks = document.getElementById('decision-checks');
+            checks.replaceChildren();
+            (record.checks || []).forEach(function (check) {
+                const item = document.createElement('li');
+                item.className = check.passed ? 'pass' : 'fail';
+                item.textContent = checkText(check);
+                checks.appendChild(item);
+            });
+
+            const output = {
+                jobId: record.jobId,
+                status: record.status,
+                referenceNumber: record.referenceNumber
+            };
+            document.getElementById('decision-output').textContent = JSON.stringify(output);
+            if (emitDecision !== false) {
+                window.dispatchEvent(new CustomEvent('expense-decision', { detail: output }));
+            }
+        }
+
+        function resetDecision() {
+            currentDecision = null;
+            const status = document.getElementById('decision-status');
+            status.className = 'status status-ready';
+            status.textContent = t('ready');
+            document.getElementById('decision-title').textContent = t('awaitingSubmission');
+            document.getElementById('decision-reason').textContent = t('awaitingDescription');
+            document.getElementById('decision-reference').textContent = '—';
+            document.getElementById('decision-amount').textContent = '—';
+            document.getElementById('decision-timestamp').textContent = '—';
+            document.getElementById('decision-output').textContent = '{"status":"ready"}';
+            document.getElementById('decision-checks').innerHTML =
+                '<li>' + t('checkPolicy') + '</li><li>' + t('checkDuplicate') + '</li>' +
+                '<li>' + t('checkLimits') + '</li><li>' + t('checkBudget') + '</li>';
+        }
+
+        function renderHistory() {
+            const requests = loadRequests();
+            const host = document.getElementById('history-table');
+            host.replaceChildren();
+            if (!requests.length) {
+                const empty = document.createElement('div');
+                empty.className = 'empty';
+                empty.textContent = t('noRequests');
+                host.appendChild(empty);
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.setAttribute('aria-label', t('historyTitle'));
+            const head = document.createElement('thead');
+            head.innerHTML = '<tr><th>' + t('tableReference') + '</th><th>' + t('tableRequester') +
+                '</th><th>' + t('tableExpense') + '</th><th>' + t('tablePurpose') +
+                '</th><th>' + t('tableDecision') + '</th><th>' + t('tableReason') +
+                '</th><th>' + t('tableSubmitted') + '</th></tr>';
+            table.appendChild(head);
+            const body = document.createElement('tbody');
+
+            requests.forEach(function (record) {
+                const row = document.createElement('tr');
+                const values = [
+                    record.referenceNumber,
+                    (record.requesterNameKey ? t(record.requesterNameKey) : record.requesterName) +
+                        '\n' + record.requesterPhone,
+                    money(record.amount, record.currency),
+                    record.purpose,
+                    t('status_' + record.status),
+                    reasonText(record),
+                    dateTime(record.createdAt)
+                ];
+                values.forEach(function (value, index) {
+                    const cell = document.createElement('td');
+                    cell.textContent = value;
+                    if (index === 3) cell.className = 'purpose';
+                    if (index === 4) cell.className = 'table-status ' + record.status;
+                    row.appendChild(cell);
+                });
+                body.appendChild(row);
+            });
+            table.appendChild(body);
+            host.appendChild(table);
+        }
+
+        function applyLanguage(nextLanguage) {
+            language = nextLanguage;
+            document.documentElement.lang = language;
+            document.title = t('documentTitle');
+            document.getElementById('language-select').value = language;
+            document.querySelectorAll('[data-i18n]').forEach(function (element) {
+                element.textContent = t(element.dataset.i18n);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(function (element) {
+                element.placeholder = t(element.dataset.i18nPlaceholder);
+            });
+            updateProfile();
+            renderHistory();
+            if (currentDecision) setDecision(currentDecision, false);
+            else resetDecision();
+        }
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (!form.reportValidity()) return;
+
+            const request = {
+                jobId: document.getElementById('job-id').value.trim(),
+                requesterPhone: phoneInput.value.trim(),
+                amount: Number(document.getElementById('amount').value),
+                currency: document.getElementById('currency').value,
+                purpose: document.getElementById('purpose').value.trim()
+            };
+            const requests = loadRequests();
+            const existing = requests.find(function (item) { return item.jobId === request.jobId; });
+            if (existing) {
+                setDecision(existing);
+                return;
+            }
+
+            try {
+                const profile = getProfile(request.requesterPhone);
+                const decision = ExpenseRules.evaluate(request, profile, requests, new Date());
+                const record = Object.assign({}, request, decision, {
+                    requesterName: profile.name || '',
+                    requesterNameKey: profile.nameKey || '',
+                    referenceNumber: referenceNumber(),
+                    createdAt: new Date().toISOString()
+                });
+                requests.unshift(record);
+                saveRequests(requests);
+                setDecision(record);
+                renderHistory();
+            } catch (error) {
+                document.getElementById('decision-reason').textContent = t('error_' + error.message);
+                document.getElementById('decision-output').textContent = JSON.stringify({ status: 'failed' });
+            }
+        });
+
+        phoneInput.addEventListener('input', updateProfile);
+
+        document.getElementById('new-request').addEventListener('click', function () {
+            form.reset();
+            updateProfile();
+            resetDecision();
+            document.getElementById('job-id').focus();
+        });
+
+        document.getElementById('reset-history').addEventListener('click', function () {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(seedRequests));
+            renderHistory();
+            resetDecision();
+        });
+
+        document.getElementById('language-select').addEventListener('change', function (event) {
+            localStorage.setItem(LANGUAGE_KEY, event.target.value);
+            applyLanguage(event.target.value);
+        });
+
+        applyLanguage(language);
+    }());
+</script>
+</body>
+</html>

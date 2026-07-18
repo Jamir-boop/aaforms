@@ -2,7 +2,7 @@
 
 Static HTML forms that serve as Automation Anywhere **recorder capture-training targets** — each
 `case-*.html` stresses a capture edge case (JS-built DOM, non-`<input>` fields, no selectors,
-nested iframes). Tiny Node static server (`server.js`). Deployed at
+nested iframes). Published as a static GitHub Pages site at
 https://jamir-boop.github.io/aaforms/. Used by the **better-recorder** project as its live test site.
 
 ## Central Knowledge Base
